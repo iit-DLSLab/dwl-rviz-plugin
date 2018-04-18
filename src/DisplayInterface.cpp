@@ -132,7 +132,13 @@ void DisplayInterface::drawLine(const Eigen::Vector3d& point1,
 	data.color = color;
 	data.type = dwl::DisplayType::LINE;
 	data.frame = frame;
-	display_stack_.push_back(data);
+
+    if (Eigen::isfinite(data.scale.array()).all() &&
+        Eigen::isfinite(data.p1.array()).all()    &&
+        Eigen::isfinite(data.p2.array()).all())
+    {
+        display_stack_.push_back(data);
+    }
 }
 
 
@@ -147,7 +153,12 @@ void DisplayInterface::drawSphere(const Eigen::Vector3d& position,
 	data.color = color;
 	data.type = dwl::DisplayType::SPHERE;
 	data.frame = frame;
-	display_stack_.push_back(data);
+
+    if (Eigen::isfinite(data.scale.array()).all() &&
+        Eigen::isfinite(data.p1.array()).all())
+    {
+        display_stack_.push_back(data);
+    }
 }
 
 
@@ -166,7 +177,12 @@ void DisplayInterface::drawArrow(const Eigen::Vector3d& begin,
 	data.color = color;
 	data.type = dwl::DisplayType::ARROW;
 	data.frame = frame;
-	display_stack_.push_back(data);
+    if (Eigen::isfinite(data.scale.array()).all() &&
+        Eigen::isfinite(data.p1.array()).all()    &&
+        Eigen::isfinite(data.p2.array()).all())
+    {
+        display_stack_.push_back(data);
+    }
 }
 
 
@@ -244,7 +260,12 @@ void DisplayInterface::drawCone(const Eigen::Vector3d& vertex,
 	data.color = color;
 	data.type = dwl::DisplayType::ARROW;
 	data.frame = frame;
-	display_stack_.push_back(data);
+    if (Eigen::isfinite(data.scale.array()).all() &&
+        Eigen::isfinite(data.p1.array()).all()    &&
+        Eigen::isfinite(data.p2.array()).all())
+    {
+        display_stack_.push_back(data);
+    }
 }
 
 
@@ -274,7 +295,11 @@ void DisplayInterface::drawText(std::string text,
 	data.color = color;
 	data.type = dwl::DisplayType::TEXT;
 	data.frame = frame;
-	display_stack_.push_back(data);
+    if (Eigen::isfinite(data.scale.array()).all() &&
+        Eigen::isfinite(data.p1.array()).all())
+    {
+        display_stack_.push_back(data);
+    }
 }
 
 } //@namespace dwl_rviz_plugin

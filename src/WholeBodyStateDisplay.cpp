@@ -535,10 +535,15 @@ void WholeBodyStateDisplay::processWholeBodyState()
 
 		// Detecting active contacts
 		if (wrench.norm() > force_threshold_) {
-			support.push_back(Ogre::Vector3(position(dwl::rbd::X),
+            if (std::isfinite(position(dwl::rbd::X))
+                && std::isfinite(position(dwl::rbd::Y))
+                && std::isfinite(position(dwl::rbd::Z))  )
+            {
+                support.push_back(Ogre::Vector3(position(dwl::rbd::X),
 											position(dwl::rbd::Y),
 											position(dwl::rbd::Z)));
-		}
+            }
+        }
 	}
 
 	// Computing the center of mass position and velocity
@@ -610,23 +615,29 @@ void WholeBodyStateDisplay::processWholeBodyState()
 
 	// Now set or update the contents of the chosen CoM visual
 	updateCoMColorAndAlpha();
-	com_visual_->setPoint(com_point);
-	com_visual_->setFramePosition(position);
-	com_visual_->setFrameOrientation(orientation);
-	double com_vel = com_vel_B.norm();
-	float shaft_length = com_shaft_length_property_->getFloat() * com_vel;
-	float shaft_radius = com_shaft_radius_property_->getFloat();
 
-	float head_length = 0., head_radius = 0.;
-	if (com_vel > 0.01) {
-		head_length = com_head_length_property_->getFloat();
-		head_radius = com_head_radius_property_->getFloat();
-	}
-	comd_visual_->setProperties(shaft_length, shaft_radius,
-								head_length, head_radius);
-	comd_visual_->setArrow(com_point, comd_for_orientation);
-	comd_visual_->setFramePosition(position);
-	comd_visual_->setFrameOrientation(orientation);
+    if (std::isfinite(com_pos(dwl::rbd::X))
+        && std::isfinite(com_pos(dwl::rbd::Y))
+        && std::isfinite(com_pos(dwl::rbd::Z)))
+    {
+        com_visual_->setPoint(com_point);
+        com_visual_->setFramePosition(position);
+        com_visual_->setFrameOrientation(orientation);
+        double com_vel = com_vel_B.norm();
+        float shaft_length = com_shaft_length_property_->getFloat() * com_vel;
+        float shaft_radius = com_shaft_radius_property_->getFloat();
+
+        float head_length = 0., head_radius = 0.;
+        if (com_vel > 0.01) {
+            head_length = com_head_length_property_->getFloat();
+            head_radius = com_head_radius_property_->getFloat();
+        }
+        comd_visual_->setProperties(shaft_length, shaft_radius,
+                                    head_length, head_radius);
+        comd_visual_->setArrow(com_point, comd_for_orientation);
+        comd_visual_->setFramePosition(position);
+        comd_visual_->setFrameOrientation(orientation);
+    }
 
 	// Defining the center of pressure as Ogre::Vector3
 	Ogre::Vector3 cop_point;
@@ -642,29 +653,45 @@ void WholeBodyStateDisplay::processWholeBodyState()
 
 	// Defining the Centroidal Moment Pivot as Ogre::Vector3
 	Ogre::Vector3 cmp_point;
+
 	cmp_point.x = cmp_pos(dwl::rbd::X);
-	cmp_point.y = cmp_pos(dwl::rbd::Y);
-	cmp_point.z = cmp_pos(dwl::rbd::Z);
+    cmp_point.y = cmp_pos(dwl::rbd::Y);
+    cmp_point.z = cmp_pos(dwl::rbd::Z);
 
 	// Now set or update the contents of the chosen CoP visual
 	updateCoPColorAndAlpha();
-	cop_visual_->setPoint(cop_point);
-	cop_visual_->setFramePosition(position);
-	cop_visual_->setFrameOrientation(orientation);
+
+    if (std::isfinite(cop_pos(dwl::rbd::X))
+        && std::isfinite(cop_pos(dwl::rbd::Y))
+        && std::isfinite(cop_pos(dwl::rbd::Z)))
+    {
+        cop_visual_->setPoint(cop_point);
+        cop_visual_->setFramePosition(position);
+        cop_visual_->setFrameOrientation(orientation);
+    }
 
 	// Now set or update the contents of the chosen Inst CP visual
 	updateICPColorAndAlpha();
-	icp_visual_->setPoint(icp_point);
-	icp_visual_->setFramePosition(position);
-	icp_visual_->setFrameOrientation(orientation);
-
+    if (std::isfinite(icp_pos(dwl::rbd::X))
+        && std::isfinite(icp_pos(dwl::rbd::Y))
+        && std::isfinite(icp_pos(dwl::rbd::Z)))
+    {
+        icp_visual_->setPoint(icp_point);
+        icp_visual_->setFramePosition(position);
+        icp_visual_->setFrameOrientation(orientation);
+    }
 	// Now set or update the contents of the chosen CMP visual
 	updateCMPColorAndAlpha();
-	cmp_visual_->setPoint(cmp_point);
-	cmp_visual_->setFramePosition(position);
-	cmp_visual_->setFrameOrientation(orientation);
+    if (std::isfinite(cmp_pos(dwl::rbd::X))
+        && std::isfinite(cmp_pos(dwl::rbd::Y))
+        && std::isfinite(cmp_pos(dwl::rbd::Z)))
+    {
+        cmp_visual_->setPoint(cmp_point);
+        cmp_visual_->setFramePosition(position);
+        cmp_visual_->setFrameOrientation(orientation);
+    }
 
-	// Now set or update the contents of the chosen GRF visual
+    // Now set or update the contents of the chosen GRF visual
 	grf_visual_.clear();
 	for (unsigned int i = 0; i < num_contacts; i++) {
 		dwl_msgs::ContactState contact = msg_->contacts[i];
@@ -711,7 +738,11 @@ void WholeBodyStateDisplay::processWholeBodyState()
 								 head_length, head_radius);
 
 			// And send it to the end of the vector
-			grf_visual_.push_back(arrow);
+            if (std::isfinite(shaft_length) && std::isfinite(shaft_radius)
+                    && std::isfinite(head_length) && std::isfinite(head_radius) )
+            {
+                grf_visual_.push_back(arrow);
+            }
 		}
 	}
 

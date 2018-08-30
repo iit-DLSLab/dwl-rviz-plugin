@@ -367,6 +367,23 @@ void WholeBodyTrajectoryDisplay::processBaseTrajectory()
 					rpy(2) = base.position;
 			}
 
+                        //sanity check position
+                        if (!(std::isfinite(pos.x) && std::isfinite(pos.y) && std::isfinite(pos.z)))
+                        {
+                            std::cerr<<"whole body traj position is not finite, resetting to zero!" <<std::endl;
+                            pos.x = 0.0;
+                            pos.y = 0.0;
+                            pos.z = 0.0;
+                        }
+                        //sanity check orientation
+                        if (!(std::isfinite(rpy(0)) && std::isfinite(rpy(1)) && std::isfinite(rpy(2))))
+                        {
+                            std::cerr<<"whole body traj orientation is not finite, resetting to quat 1 0 0 0!" <<std::endl;
+                            rpy(0) = 0.0;
+                            rpy(1) = 0.0;
+                            rpy(2) = 0.0;
+                        }
+
 			Ogre::Vector3 xpos = transform * pos;
 			base_manual_object_->position(xpos.x, xpos.y, xpos.z);
 			base_manual_object_->colour(base_color);
@@ -385,7 +402,7 @@ void WholeBodyTrajectoryDisplay::processBaseTrajectory()
 				quat.y = q.y();
 				quat.z = q.z();
 
-				boost::shared_ptr<rviz::Axes> axes;
+                                boost::shared_ptr<rviz::Axes> axes;
 				axes.reset(new Axes(scene_manager_, scene_node_, 0.04, 0.008));
 				axes->setPosition(xpos);
 				axes->setOrientation(quat * orientation); // combination of rotations
@@ -411,7 +428,7 @@ void WholeBodyTrajectoryDisplay::processBaseTrajectory()
 					quat.y = q.y();
 					quat.z = q.z();
 
-					boost::shared_ptr<rviz::Axes> axes;
+                                        boost::shared_ptr<rviz::Axes> axes;
 					axes.reset(new Axes(scene_manager_, scene_node_, 0.04, 0.008));
 					axes->setPosition(xpos);
 					axes->setOrientation(quat * orientation); // combination of rotations
@@ -464,6 +481,24 @@ void WholeBodyTrajectoryDisplay::processBaseTrajectory()
 				else
 					rpy(2) = base.position;
 			}
+
+                        //sanity check position
+                        if (!(std::isfinite(pos.x) && std::isfinite(pos.y) && std::isfinite(pos.z)))
+                        {
+                            std::cerr<<"whole body traj position is not finite, resetting to zero!" <<std::endl;
+                            pos.x = 0.0;
+                            pos.y = 0.0;
+                            pos.z = 0.0;
+                        }
+                        //sanity check orientation
+                        if (!(std::isfinite(rpy(0)) && std::isfinite(rpy(1)) && std::isfinite(rpy(2))))
+                        {
+                            std::cerr<<"whole body traj orientation is not finite, resetting to quat 1 0 0 0!" <<std::endl;
+                            rpy(0) = 0.0;
+                            rpy(1) = 0.0;
+                            rpy(2) = 0.0;
+                        }
+
 
 			Ogre::Vector3 xpos = transform * pos;
 			base_billboard_line_->addPoint(xpos, base_color);
@@ -556,6 +591,23 @@ void WholeBodyTrajectoryDisplay::processBaseTrajectory()
 				else
 					rpy(2) = base.position;
 			}
+
+                        //sanity check position
+                        if (!(std::isfinite(pos.x) && std::isfinite(pos.y) && std::isfinite(pos.z)))
+                        {
+                            std::cerr<<"whole body traj position is not finite, resetting to zero!" <<std::endl;
+                            pos.x = 0.0;
+                            pos.y = 0.0;
+                            pos.z = 0.0;
+                        }
+                        //sanity check orientation
+                        if (!(std::isfinite(rpy(0)) && std::isfinite(rpy(1)) && std::isfinite(rpy(2))))
+                        {
+                            std::cerr<<"whole body traj orientation is not finite, resetting to quat 1 0 0 0!" <<std::endl;
+                            rpy(0) = 0.0;
+                            rpy(1) = 0.0;
+                            rpy(2) = 0.0;
+                        }
 
 			// We are keeping a vector of CoM visual pointers. This creates the next
 			// one and stores it in the vector
@@ -735,6 +787,8 @@ void WholeBodyTrajectoryDisplay::processContactTrajectory()
 					base_rpy(2) = base.position;
 			}
 
+
+
 			// Computing the base to world transform
 			Eigen::Quaterniond quat = dwl::math::getQuaternion(base_rpy);
 			Ogre::Quaternion ogre_quat(quat.w(), quat.x(), quat.y(), quat.z());
@@ -754,7 +808,15 @@ void WholeBodyTrajectoryDisplay::processContactTrajectory()
 															 contact.position.y,
 															 contact.position.z);
 
-					contact_manual_object_[traj_id]->position(xpos.x, xpos.y, xpos.z);
+                                        //sanity check orientation
+                                        if (!(std::isfinite(xpos.x) && std::isfinite(xpos.y) && std::isfinite(xpos.z)))
+                                        {
+                                            std::cerr<<"whole body contact trajectory is not finite, resetting to zero!" <<std::endl;
+                                            xpos.x = 0.0;
+                                            xpos.y = 0.0;
+                                            xpos.z = 0.0;
+                                        }
+                                        contact_manual_object_[traj_id]->position(xpos.x, xpos.y, xpos.z);
 					contact_manual_object_[traj_id]->colour(contact_color);
 				}
 			}
@@ -836,7 +898,15 @@ void WholeBodyTrajectoryDisplay::processContactTrajectory()
 															 contact.position.y,
 															 contact.position.z);
 
-					contact_billboard_line_[traj_id]->addPoint(xpos, contact_color);
+                                        //sanity check orientation
+                                        if (!(std::isfinite(xpos.x) && std::isfinite(xpos.y) && std::isfinite(xpos.z)))
+                                        {
+                                            std::cerr<<"whole body contact trajectory is not finite, resetting to zero!" <<std::endl;
+                                            xpos.x = 0.0;
+                                            xpos.y = 0.0;
+                                            xpos.z = 0.0;
+                                        }
+                                        contact_billboard_line_[traj_id]->addPoint(xpos, contact_color);
 				}
 			}
 		}
@@ -912,7 +982,16 @@ void WholeBodyTrajectoryDisplay::processContactTrajectory()
 															 contact.position.y,
 															 contact.position.z);
 
-					contact_points_[i][contact_idx].reset(new PointVisual(context_->getSceneManager(),
+
+                                        //sanity check orientation
+                                        if (!(std::isfinite(xpos.x) && std::isfinite(xpos.y) && std::isfinite(xpos.z)))
+                                        {
+                                            std::cerr<<"whole body contact trajectory is not finite, resetting to zero!" <<std::endl;
+                                            xpos.x = 0.0;
+                                            xpos.y = 0.0;
+                                            xpos.z = 0.0;
+                                        }
+                                        contact_points_[i][contact_idx].reset(new PointVisual(context_->getSceneManager(),
 																  scene_node_));
 					contact_points_[i][contact_idx]->setColor(contact_color.r,
 													  contact_color.g,
